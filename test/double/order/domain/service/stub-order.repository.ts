@@ -12,4 +12,8 @@ export class StubOrderRepository implements OrderRepository {
 	public get createCallArgs(): Order | undefined {
 		return this._createCallArgs;
 	}
+
+	public remove(orderNumber: number): Promise<void> {
+		return Promise.resolve(undefined);
+	}
 }

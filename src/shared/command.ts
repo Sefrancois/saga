@@ -1,5 +1,4 @@
 import { Result } from "@sefr/result";
-
 import { DomainError } from "@shared/domain-error";
 import { DomainEvent } from "@shared/event";
 

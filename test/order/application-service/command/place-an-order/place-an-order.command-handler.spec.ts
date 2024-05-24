@@ -7,9 +7,9 @@ import { OrderPlacedEvent } from "@order/domain/event/order-placed.event";
 import { Order } from "@order/domain/model/order";
 import { Product } from "@order/domain/model/product";
 import { Tuple } from "@shared/tuple";
+import { StubOrderRepository } from "@test/double/order/domain/service/stub-order.repository";
 import { StubId } from "@test/double/shared/domain/service/stub.id";
 import { StubTime } from "@test/double/shared/domain/service/stub.time";
-import { StubOrderRepository } from "@test/double/order/domain/service/stub-order.repository";
 import { describe, expect, it } from "vitest";
 
 const customerNumber = "6230246F-8E3F-47EC-BD11-9DD4067016B7";

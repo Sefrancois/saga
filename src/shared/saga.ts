@@ -5,6 +5,7 @@ export namespace Saga {
 		execute(...args: unknown[]): Promise<Result<unknown>>;
 		compensate(...args: unknown[]): Promise<void>;
 	}
+
 	export class Runner {
 		private steps: Map<number, Saga.Step>;
 		private currentStep: number;
