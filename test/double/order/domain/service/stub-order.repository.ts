@@ -13,7 +13,7 @@ export class StubOrderRepository implements OrderRepository {
 		return this._createCallArgs;
 	}
 
-	public remove(orderNumber: number): Promise<void> {
+	public remove(orderNumber: string): Promise<void> {
 		return Promise.resolve(undefined);
 	}
 }

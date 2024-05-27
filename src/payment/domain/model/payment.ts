@@ -1,6 +1,6 @@
+import { PaymentFailed } from "@payment/domain/error/payment-failed.error";
 import { Order } from "@payment/domain/model/order";
 import { Result } from "@sefr/result";
-import { DomainError } from "@shared/domain-error";
 
 export enum PaymentType {
 	ALLOPASS = "Allopass",
@@ -9,15 +9,15 @@ export enum PaymentType {
 }
 
 export abstract class Payment {
-	private readonly number: string;
-	private readonly order: Order;
+	protected readonly number: string;
+	protected readonly order: Order;
 
 	protected constructor(number: string, order: Order) {
 		this.number = number;
 		this.order = order;
 	}
 
-	abstract proceed(): Result<void | DomainError>;
+	abstract proceed(): Result<void | PaymentFailed>;
 
 	public getNumber(): string {
 		return this.number;

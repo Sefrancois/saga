@@ -27,4 +27,10 @@ export class OrderDatasource {
 		if (order) return Promise.resolve(order);
 		else throw new Error("Cannot find existing order or create new order without order number.");
 	}
+
+	public remove(orderNumber: string): Promise<void> {
+		const indexOfOrder = this.orders.findIndex((orderEntity) => orderEntity.number === orderNumber);
+		this.orders.splice(indexOfOrder, 1);
+		return Promise.resolve();
+	}
 }

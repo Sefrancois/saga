@@ -1,7 +1,7 @@
-import { DomainError } from "@shared/domain-error";
+import { PaymentFailed } from "@payment/domain/error/payment-failed.error";
 
-export class CardExpiredError extends DomainError {
-	constructor(cardNumber: number) {
-		super(`Card ${cardNumber} is expired.`);
+export class CardExpired extends PaymentFailed {
+	constructor(orderNumber: string, cardNumber: number) {
+		super(orderNumber, `card ${cardNumber} is expired.`);
 	}
 }

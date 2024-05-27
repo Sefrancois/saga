@@ -15,18 +15,22 @@ export class PlaceAnOrderCommandHandler implements CommandHandler<PlaceAnOrderCo
 
     public async execute(command: PlaceAnOrderCommand): Promise<Result<OrderPlacedEvent | NoProductInOrderError>> {
         const orderNumber = this.id.generate();
-        if (command.content.products.length === 0) {
+        if (PlaceAnOrderCommandHandler.orderHasProducts(command)) {
             return Result.failure(new NoProductInOrderError(orderNumber));
         }
         await this.orders.create(new Order(orderNumber, command.content.clientNumber, command.content.products));
         return Result.ok(new OrderPlacedEvent("SEFR", this.time.now(), { number: orderNumber }));
     }
 
-    public async compensate(orderNumber: number): Promise<void> {
+    public async compensate(orderNumber: string): Promise<void> {
         try {
             await this.orders.remove(orderNumber);
         } catch(e) {
-
+            console.log("Arf");
         }
+    }
+
+    private static orderHasProducts(command: PlaceAnOrderCommand): boolean {
+        return command.content.products.length === 0;
     }
 }

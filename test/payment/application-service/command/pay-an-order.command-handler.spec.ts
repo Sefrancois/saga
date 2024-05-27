@@ -3,12 +3,12 @@ import { PaymentDatasource } from "@datasource/payment.datasource";
 import { Product } from "@order/domain/model/product";
 import { PayAnOrderCommand } from "@payment/application-service/command/pay-an-order.command";
 import { PayAnOrderCommandHandler } from "@payment/application-service/command/pay-an-order.command-handler";
-import { CardExpiredError } from "@payment/domain/error/card-expired.error";
+import { CardExpired } from "@payment/domain/error/card-expired.error";
 import { OrderPaidEvent } from "@payment/domain/event/order-paid.event";
 import { PaymentType } from "@payment/domain/model/payment";
 import { Tuple } from "@shared/tuple";
-import { StubOrderRepository } from "@test/double/payment/domain/service/stub-order.repository";
-import { StubPaymentRepository } from "@test/double/payment/domain/service/stub-payment.repository";
+import { PaymentOrderInMemoryRepository } from "@payment/infrastructure/gateway/repository/payment-order-in-memory.repository";
+import { PaymentInMemoryRepository } from "@payment/infrastructure/gateway/repository/payment-in-memory.repository";
 import { StubId } from "@test/double/shared/domain/service/stub.id";
 import { StubTime } from "@test/double/shared/domain/service/stub.time";
 import { describe, expect, it } from "vitest";
@@ -18,9 +18,9 @@ const customer = "B681F457-6B9D-48D3-82D7-8D2BD9A01FFB";
 const actionMan = new Product("Action-Man : Pompier", "Action-Man the greatest of all heroes", "reference-1", 50);
 const products: Array<Tuple<number, Product>> = [[2, actionMan]];
 const orderDatasource = new OrderDatasource([]);
-const orderRepository = new StubOrderRepository(orderDatasource);
+const orderRepository = new PaymentOrderInMemoryRepository(orderDatasource);
 const paymentDatasource = new PaymentDatasource([]);
-const paymentRepository = new StubPaymentRepository(paymentDatasource);
+const paymentRepository = new PaymentInMemoryRepository(paymentDatasource);
 const time = new StubTime();
 const id = new StubId();
 let payAnOrderCommand = new PayAnOrderCommand({
@@ -94,7 +94,7 @@ describe("PayAnOrderCommandHandler", () => {
 
 						// Then
 						expect(result.isFailure).to.be.true;
-						expect(result.value).to.deep.equal(new CardExpiredError(paymentInfo.cardNumber));
+						expect(result.value).to.deep.equal(new CardExpired(orderNumber, paymentInfo.cardNumber));
 					});
 				});
 			});

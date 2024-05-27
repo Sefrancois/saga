@@ -9,4 +9,8 @@ export class OrderInMemoryRepository implements OrderRepository {
 	public async create(order: Order): Promise<void> {
         await this.orderDatasource.save({ ...order, paid: false });
     }
+
+	public async remove(orderNumber: string): Promise<void> {
+		await this.orderDatasource.remove(orderNumber);
+	}
 }

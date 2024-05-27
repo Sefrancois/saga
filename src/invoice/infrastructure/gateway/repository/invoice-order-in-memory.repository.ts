@@ -1,8 +1,8 @@
 import { OrderDatasource } from "@datasource/order.datasource";
 import { Order } from "@invoice/domain/model/order";
-import { OrderRepository } from "@invoice/domain/service/order.repository";
+import { InvoiceOrderRepository } from "@invoice/domain/service/invoice-order.repository";
 
-export class StubOrderRepository implements OrderRepository {
+export class InvoiceOrderInMemoryRepository implements InvoiceOrderRepository {
 	constructor(private readonly orderDatasource: OrderDatasource) {
 	}
 

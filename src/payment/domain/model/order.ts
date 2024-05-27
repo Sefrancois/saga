@@ -1,5 +1,5 @@
 export class Order {
-	private readonly number: string;
+	public readonly number: string;
 	private paid: boolean;
 
 	constructor(number: string, paid: boolean) {

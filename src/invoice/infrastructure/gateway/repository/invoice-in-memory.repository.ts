@@ -2,7 +2,7 @@ import { InvoiceDatasource } from "@datasource/invoice.datasource";
 import { Invoice } from "@invoice/domain/model/invoice";
 import { InvoiceRepository } from "@invoice/domain/service/invoice.repository";
 
-export class StubInvoiceRepository implements InvoiceRepository {
+export class InvoiceInMemoryRepository implements InvoiceRepository {
 	constructor(private readonly invoiceDatasource: InvoiceDatasource) {
 	}
 
