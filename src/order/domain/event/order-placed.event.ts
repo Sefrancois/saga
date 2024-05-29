@@ -1,4 +1,4 @@
-import { DomainEvent } from "@shared/event";
+import { DomainEvent } from "@shared/domain-event";
 
 type OrderPlacedContent = {
 	number: string;

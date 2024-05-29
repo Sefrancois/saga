@@ -11,6 +11,6 @@ export class PaymentInMemoryRepository implements PaymentRepository {
 	}
 
 	public async cancel(paymentNumber: string): Promise<void> {
-		// To do
+		await this.paymentDatasource.remove(paymentNumber);
 	}
 }

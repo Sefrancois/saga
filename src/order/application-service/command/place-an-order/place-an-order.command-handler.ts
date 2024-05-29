@@ -9,7 +9,9 @@ import { Id } from "@shared/id";
 import { Saga } from "@shared/saga";
 import { Time } from "@shared/time";
 
-export class PlaceAnOrderCommandHandler implements CommandHandler<PlaceAnOrderCommand>, Saga.Step {
+export class PlaceAnOrderCommandHandler implements CommandHandler<PlaceAnOrderCommand>, Saga.Step<PlaceAnOrderCommand, OrderPlacedEvent | NoProductInOrderError> {
+    public readonly Command = PlaceAnOrderCommand;
+
     constructor(private readonly time: Time, private readonly id: Id, private readonly orders: OrderRepository) {
     }
 
@@ -22,11 +24,12 @@ export class PlaceAnOrderCommandHandler implements CommandHandler<PlaceAnOrderCo
         return Result.ok(new OrderPlacedEvent("SEFR", this.time.now(), { number: orderNumber }));
     }
 
-    public async compensate(orderNumber: string): Promise<void> {
+    public async compensate(input: Saga.CompensationMessage<{ orderNumber: string }>): Promise<Saga.CompensationMessage<{ orderNumber: string }>> {
         try {
-            await this.orders.remove(orderNumber);
+            await this.orders.remove(input.content.orderNumber);
+            return input;
         } catch(e) {
-            console.log("Arf");
+            throw new Error();
         }
     }
 

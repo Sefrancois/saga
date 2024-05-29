@@ -1,10 +1,7 @@
 import { DomainError } from "@shared/domain-error";
 
-export class PaymentFailed extends DomainError {
-	public readonly orderNumber: string;
-
+export class PaymentFailed extends DomainError<{ orderNumber: string }> {
 	constructor(orderNumber: string, reason: string) {
-		super(`Failed payment for order ${orderNumber} because ${reason}`);
-		this.orderNumber = orderNumber;
+		super(`Failed payment for order ${orderNumber} because ${reason}`, { orderNumber });
 	}
 }

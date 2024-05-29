@@ -1,6 +1,6 @@
 import { Result } from "@sefr/result";
 import { DomainError } from "@shared/domain-error";
-import { DomainEvent } from "@shared/event";
+import { DomainEvent } from "@shared/domain-event";
 
 export abstract class Command<T> {
 	protected name: symbol;
@@ -17,5 +17,5 @@ export abstract class Command<T> {
 }
 
 export interface CommandHandler<T extends Command<unknown>> {
-	execute(command: T): Promise<Result<DomainEvent<unknown> | DomainError>>;
+	execute(command: T): Promise<Result<DomainEvent<unknown> | DomainError<unknown>>>;
 }

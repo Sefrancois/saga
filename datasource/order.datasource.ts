@@ -33,4 +33,8 @@ export class OrderDatasource {
 		this.orders.splice(indexOfOrder, 1);
 		return Promise.resolve();
 	}
+
+	public getAll(): Promise<Array<OrderEntity>> {
+		return Promise.resolve(this.orders);
+	}
 }

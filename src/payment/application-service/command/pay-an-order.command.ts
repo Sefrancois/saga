@@ -2,7 +2,7 @@ import { PaymentType } from "@payment/domain/model/payment";
 import { Command } from "@shared/command";
 
 type PayAnOrderContent<T> = {
-	orderNumber: string;
+	number: string;
 	paymentType: PaymentType;
 	paymentInfo: T
 };

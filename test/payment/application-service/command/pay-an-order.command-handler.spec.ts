@@ -24,7 +24,7 @@ const paymentRepository = new PaymentInMemoryRepository(paymentDatasource);
 const time = new StubTime();
 const id = new StubId();
 let payAnOrderCommand = new PayAnOrderCommand({
-	orderNumber, paymentType: PaymentType.CREDIT_CARD, paymentInfo: {
+	number: orderNumber, paymentType: PaymentType.CREDIT_CARD, paymentInfo: {
 		cardNumber: 1234123456785678,
 		owner: "SEFR",
 		expirationDate: new Date("2025-01-01T13:00:00.000Z"),
@@ -52,7 +52,7 @@ describe("PayAnOrderCommandHandler", () => {
 
 						// Then
 						expect(result.isFailure).to.be.false;
-						expect(result.value).to.deep.equal(new OrderPaidEvent("SEFR", time.now(), { orderNumber: payAnOrderCommand.content.orderNumber }));
+						expect(result.value).to.deep.equal(new OrderPaidEvent("SEFR", time.now(), { orderNumber: payAnOrderCommand.content.number }));
 						const expectedOrder = await orderDatasource.getOne(orderNumber);
 						expect(expectedOrder).to.deep.equal({
 							number: orderNumber,
@@ -78,7 +78,7 @@ describe("PayAnOrderCommandHandler", () => {
 							cvc: 123,
 						};
 						payAnOrderCommand = new PayAnOrderCommand({
-							orderNumber,
+							number: orderNumber,
 							paymentType: PaymentType.CREDIT_CARD,
 							paymentInfo,
 						});

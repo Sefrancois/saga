@@ -1,8 +1,9 @@
 import { Product } from "@order/domain/model/product";
 import { Command } from "@shared/command";
+import { Tuple } from "@shared/tuple";
 
-type PlaceAnOrderContent = {
-	products: Array<[number, Product]>;
+export type PlaceAnOrderContent = {
+	products: Array<Tuple<number, Product>>;
 	clientNumber: string;
 }
 

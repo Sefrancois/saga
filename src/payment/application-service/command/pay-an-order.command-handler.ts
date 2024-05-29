@@ -10,12 +10,14 @@ import { Id } from "@shared/id";
 import { Saga } from "@shared/saga";
 import { Time } from "@shared/time";
 
-export class PayAnOrderCommandHandler implements CommandHandler<PayAnOrderCommand>, Saga.Step {
-    constructor(private readonly orders: OrderRepository, private readonly payments: PaymentRepository, private readonly time: Time, private readonly id: Id) {
+export class PayAnOrderCommandHandler implements CommandHandler<PayAnOrderCommand>, Saga.Step<PayAnOrderCommand, OrderPaidEvent | PaymentFailed> {
+    public readonly Command = PayAnOrderCommand;
+
+    constructor(protected readonly orders: OrderRepository, private readonly payments: PaymentRepository, private readonly time: Time, protected readonly id: Id) {
     }
 
     public async execute(command: PayAnOrderCommand): Promise<Result<OrderPaidEvent | PaymentFailed>> {
-        const order = await this.orders.getOne(command.content.orderNumber);
+        const order = await this.orders.getOne(command.content.number);
         const payment = PaymentFactory.create(this.id.generate(), order, command.content.paymentType, command.content.paymentInfo);
         const isPaymentProceeded = payment.proceed();
 
@@ -25,14 +27,16 @@ export class PayAnOrderCommandHandler implements CommandHandler<PayAnOrderComman
 
         await this.orders.save(order);
         await this.payments.save(payment);
-        return Result.ok(new OrderPaidEvent("SEFR", this.time.now(), { orderNumber: command.content.orderNumber }));
+        return Result.ok(new OrderPaidEvent("SEFR", this.time.now(), { orderNumber: command.content.number }));
     }
 
-    public async compensate(paymentNumber: string): Promise<void> {
+    public async compensate(input: Saga.CompensationMessage<{ orderNumber: string }>): Promise<Saga.CompensationMessage<{ orderNumber: string }>> {
         try {
-            await this.payments.cancel(paymentNumber);
+            await this.payments.cancel(input.content.orderNumber);
+            return input;
         } catch(e) {
             console.error("Arf");
+            throw new Error();
         }
     }
 }

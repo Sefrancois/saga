@@ -1,4 +1,4 @@
-import { DomainEvent } from "@shared/event";
+import { DomainEvent } from "@shared/domain-event";
 
 export class InvoiceCreatedForOrder extends DomainEvent<InvoiceCreatedForOrderContent> {
 	constructor(author: string, emitted: Date, content: InvoiceCreatedForOrderContent) {
