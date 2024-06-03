@@ -5,7 +5,8 @@
   "main": "main.ts",
   "scripts": {
     "lint": "eslint src --fix",
-    "test": "vitest"
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "saga",

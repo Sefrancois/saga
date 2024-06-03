@@ -36,7 +36,7 @@ import { Time } from "@shared/time";
 import { Tuple } from "@shared/tuple";
 import { StubId } from "@test/double/shared/domain/service/stub.id";
 import { StubTime } from "@test/double/shared/domain/service/stub.time";
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 const ps4 = new Product("PlayStation 4", "Une console de salon de 4ème génération", "ref-ps4", 250);
 const ps5 = new Product("PlayStation 5", "Une console de salon de 5ème génération", "ref-ps4", 600);
