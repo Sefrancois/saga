@@ -94,7 +94,7 @@ describe("Saga.Runner", () => {
 				const initialCommand = createAnOrderContent();
 
 				// When
-				await sagaRunner.execute(initialCommand);
+				await sagaRunner.start(initialCommand);
 
 				// Then
 				const expectedOrderId = "332364C3-C90F-4BF8-AF9C-22B97089190E";
@@ -137,7 +137,7 @@ describe("Saga.Runner", () => {
 				const initialCommand = createAnOrderContent();
 
 				// When
-				await sagaRunner.execute(initialCommand);
+				await sagaRunner.start(initialCommand);
 
 				// Then
 				expect(await orderDatasource.getAll()).to.be.empty;
@@ -158,7 +158,7 @@ describe("Saga.Runner", () => {
 				const initialCommand = createAnOrderContent();
 
 				// When
-				await sagaRunner.execute(initialCommand);
+				await sagaRunner.start(initialCommand);
 
 				// Then
 				expect(await orderDatasource.getAll()).to.be.empty;

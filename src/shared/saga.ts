@@ -8,7 +8,7 @@ type Saga = Array<Saga.Step<Command<unknown>, DomainEvent<unknown> | Saga.Compen
 export namespace Saga {
 	export interface Step<I extends Command<unknown>, O extends DomainEvent<unknown> | CompensationMessage<unknown>> {
 		Command: CommandConstructor<I>;
-		execute(command: Command<unknown>): Promise<Result<O>>;
+		execute(command: I): Promise<Result<O>>;
 		compensate(input: CompensationMessage<unknown>): Promise<CompensationMessage<unknown>>;
 	}
 
@@ -19,51 +19,43 @@ export namespace Saga {
 
 	export class Runner {
 		private readonly saga: Saga;
-		private currentSagaStepIndex: number;
 
 		public constructor() {
 			this.saga = [];
-			this.currentSagaStepIndex = 0;
 		}
 
 		public addStep(step: Saga.Step<Command<unknown>, DomainEvent<unknown> | CompensationMessage<unknown>>): void {
 			this.saga.push(step);
 		}
 
-		public async execute(initialMessage: unknown): Promise<void> {
-			let commandCreatedFromMessage: Command<unknown>;
-			let messageForNextStep = initialMessage;
-
-			while (this.hasStepLeft()) {
-				const currentStep = this.saga[this.currentSagaStepIndex];
-				commandCreatedFromMessage = new currentStep.Command(messageForNextStep);
-				const stepResult = await currentStep.execute(commandCreatedFromMessage);
-
-				if (stepResult.isFailure) {
-					const previousStepIndex = this.currentSagaStepIndex - 1;
-					await this.compensate(previousStepIndex, new CompensationMessage(stepResult.value));
-					return;
-				}
-
-				messageForNextStep = (<DomainEvent<unknown>>stepResult.value).getContent();
-				this.currentSagaStepIndex++;
-			}
-
-			this.currentSagaStepIndex = 0;
+		public async start(message: unknown): Promise<void> {
+			await this.execute(message, 0);
 		}
 
-		private hasStepLeft(): boolean {
-			return this.currentSagaStepIndex <= this.saga.length - 1;
+		private async execute(message: unknown, stepIndex: number): Promise<void> {
+			if (!this.hasStepLeft(stepIndex)) return;
+
+			const currentStep = this.saga[stepIndex];
+			const command = new currentStep.Command(message);
+			const stepResult = await currentStep.execute(command);
+
+			if (stepResult.isFailure) {
+				await this.compensate(stepIndex - 1, new CompensationMessage(stepResult.value));
+				return;
+			}
+
+			const messageForNextStep = (<DomainEvent<unknown>>stepResult.value).getContent();
+			await this.execute(messageForNextStep, stepIndex + 1);
+		}
+
+		private hasStepLeft(stepIndex: number): boolean {
+			return stepIndex <= this.saga.length - 1;
 		}
 
 		private async compensate(stepIndex: number, input: CompensationMessage<unknown>): Promise<void> {
-			this.currentSagaStepIndex = stepIndex;
-			if (this.currentSagaStepIndex < 0) {
-				this.currentSagaStepIndex = 0;
-				return;
-			}
-			const compensationMessage = await this.saga[this.currentSagaStepIndex].compensate(input);
-			await this.compensate(this.currentSagaStepIndex - 1, compensationMessage);
+			if (stepIndex < 0) return;
+			const compensationMessage = await this.saga[stepIndex].compensate(input);
+			await this.compensate(stepIndex - 1, compensationMessage);
 		}
 	}
 }
